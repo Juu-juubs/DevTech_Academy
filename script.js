@@ -1,3 +1,21 @@
+class Aluno {
+  constructor(nome, idade, curso, notaFinal) {
+    this.nome = nome;
+    this.idade = idade;
+    this.curso = curso;
+    this.notaFinal = notaFinal;
+  }
+
+  isAprovado() {
+    return this.notaFinal >= 7;
+  }
+
+  toString() {
+    const situacao = this.isAprovado() ? "Aprovado" : "Reprovado";
+    return `${this.nome} (${this.idade} anos) - ${this.curso} - Nota: ${this.notaFinal} - ${situacao}`;
+  }
+}
+
 let alunos = [];
 
 let indiceEdicao = -1;
@@ -13,12 +31,8 @@ function salvarAluno() {
     return;
   }
 
-  const aluno = {
-    nome: nome,
-    idade: Number(idade),
-    curso: curso,
-    notaFinal: Number(notaFinal)
-  };
+  const aluno = new Aluno(nome, Number(idade), curso, Number(notaFinal));
+  console.log(aluno.toString());
 
   if (indiceEdicao === -1) {
     alunos.push(aluno);
@@ -42,12 +56,16 @@ function renderizarTabela() {
 
   for (let i = 0; i < alunos.length; i++) {
     const a = alunos[i];
+    const classeSelo = a.isAprovado() ? "bg-success" : "bg-danger";
+    const textoSelo = a.isAprovado() ? "Aprovado" : "Reprovado";
+
     corpo.innerHTML += `
       <tr>
         <td>${a.nome}</td>
         <td>${a.idade}</td>
         <td>${a.curso}</td>
         <td>${a.notaFinal}</td>
+        <td><span class="badge ${classeSelo}">${textoSelo}</span></td>
         <td>
           <button class="btn btn-warning btn-sm me-1" onclick="editarAluno(${i})">Editar</button>
           <button class="btn btn-danger btn-sm" onclick="excluirAluno(${i})">Excluir</button>
