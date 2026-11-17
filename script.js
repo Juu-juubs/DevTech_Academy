@@ -118,3 +118,87 @@ btnCancelar.addEventListener("click", function () {
   limparFormulario();
   console.log("Edição cancelada.");
 });
+
+const resultado = document.getElementById("resultado");
+
+const exibirResultado = (titulo, linhas) => {
+  resultado.innerHTML = "";
+
+  const tituloEl = document.createElement("strong");
+  tituloEl.textContent = titulo;
+  resultado.appendChild(tituloEl);
+
+  const lista = document.createElement("ul");
+  lista.className = "mb-0 mt-2";
+  linhas.forEach((linha) => {
+    const item = document.createElement("li");
+    item.textContent = linha;
+    lista.appendChild(item);
+  });
+  resultado.appendChild(lista);
+};
+
+const semAlunos = () => {
+  if (alunos.length === 0) {
+    exibirResultado("Aviso", ["Não há alunos cadastrados."]);
+    return true;
+  }
+  return false;
+};
+
+document.getElementById("btn-aprovados").addEventListener("click", () => {
+  if (semAlunos()) return;
+
+  const aprovados = alunos
+    .filter((aluno) => aluno.isAprovado())
+    .map((aluno) => aluno.toString());
+
+  exibirResultado(
+    "Alunos aprovados (nota >= 7):",
+    aprovados.length > 0 ? aprovados : ["Nenhum aluno aprovado."]
+  );
+});
+
+document.getElementById("btn-media-notas").addEventListener("click", () => {
+  if (semAlunos()) return;
+
+  const soma = alunos.reduce((acc, aluno) => acc + aluno.notaFinal, 0);
+  const media = soma / alunos.length;
+
+  exibirResultado("Média das notas finais:", [media.toFixed(2)]);
+});
+
+document.getElementById("btn-media-idades").addEventListener("click", () => {
+  if (semAlunos()) return;
+
+  const soma = alunos.reduce((acc, aluno) => acc + aluno.idade, 0);
+  const media = soma / alunos.length;
+
+  exibirResultado("Média das idades:", [media.toFixed(1) + " anos"]);
+});
+
+document.getElementById("btn-ordem-alfabetica").addEventListener("click", () => {
+  if (semAlunos()) return;
+
+  const nomes = alunos
+    .map((aluno) => aluno.nome)
+    .sort((a, b) => a.localeCompare(b));
+
+  exibirResultado("Alunos em ordem alfabética:", nomes);
+});
+
+document.getElementById("btn-por-curso").addEventListener("click", () => {
+  if (semAlunos()) return;
+
+  const contagem = alunos.reduce((acc, aluno) => {
+    acc[aluno.curso] = (acc[aluno.curso] || 0) + 1;
+    return acc;
+  }, {});
+
+  const linhas = [];
+  Object.entries(contagem).forEach(([curso, quantidade]) => {
+    linhas.push(`${curso}: ${quantidade} aluno(s)`);
+  });
+
+  exibirResultado("Quantidade de alunos por curso:", linhas);
+});
